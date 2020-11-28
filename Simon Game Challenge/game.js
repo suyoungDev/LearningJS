@@ -15,6 +15,7 @@ $(".btn").click(function() {
 });
 
 function nextSequence() {
+
   var randomNumber = Math.floor(Math.random() * 4);
   var randomChosenColour = buttonColours[randomNumber];
   gamePattern.push(randomChosenColour);
@@ -27,6 +28,7 @@ function nextSequence() {
 
 //2. Create a new function called playSound() that takes a single input parameter called name.
 function playSound(name) {
+
   //3. Take the code we used to play sound in the nextSequence() function and add it to playSound().
   var audio = new Audio("sounds/" + name + ".mp3");
   audio.play();
