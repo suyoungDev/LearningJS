@@ -1,35 +1,75 @@
+const buttonColours = ["red", "blue", "green", "yellow"];
 
-var buttonColours = ["red", "blue", "green", "yellow"];
+let gamePattern = [];
+let userClickedPattern = [];
+let isStart = false;
+let level = 0;
 
-var gamePattern = [];
-var userClickedPattern = [];
 
-$(".btn").click(function() {
-
-  var userChosenColour = $(this).attr("id");
-  userClickedPattern.push(userChosenColour);
-
-  //1. In the same way we played sound in nextSequence() , when a user clicks on a button, the corresponding sound should be played.
-  playSound(userChosenColour);
-
+$(document).keypress(function(){
+  if (!isStart) {
+    isStart = true;
+    $('#level-title').text(`Level ${level}`);
+    nextSequence();
+  }
 });
 
-function nextSequence() {
 
-  var randomNumber = Math.floor(Math.random() * 4);
-  var randomChosenColour = buttonColours[randomNumber];
+$('.btn').click( function(){
+  let userChosenColor = $(this).attr('id');
+  userClickedPattern.push(userChosenColor);
+  console.log(userClickedPattern);
+  
+  playSound(userChosenColor);
+  animatePress(userChosenColor);
+
+  checkAnswer(userClickedPattern.length-1);
+});
+
+
+function checkAnswer(currentLevel){
+  if (userClickedPattern[currentLevel] === gamePattern[currentLevel]){
+    console.log('success');
+
+    if (userClickedPattern.length === gamePattern.length){
+      setTimeout(function(){
+        nextSequence();
+      }, 1000);
+    }
+    
+  } else {
+    console.log('wrong');
+    playSound('wrong');
+  }
+}
+
+
+function nextSequence(){
+  // nextSequence가 불러올때마다 레벨업
+  level ++;
+  $('#level-title').text(`Level ${level}`);
+
+  userClickedPattern = [];
+
+  let randomNumber = Math.floor(Math.random() * 4);
+  let randomChosenColour = buttonColours[randomNumber];
   gamePattern.push(randomChosenColour);
 
-  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+  $(`#${randomChosenColour}`).fadeOut(50).fadeIn(50);
+};
 
-  //4. Refactor the code in playSound() so that it will work for both playing sound in nextSequence() and when the user clicks a button.
-  playSound(randomChosenColour);
+function playSound(key){
+  let sound = new Audio(`./sounds/${key}.mp3`)
+  sound.play();
+};
+
+
+function animatePress(currentColor){
+  $(`#${currentColor}`).addClass('pressed');
+
+  setTimeout(function(){
+    $(`#${currentColor}`).removeClass('pressed');
+  }, 100);
 }
 
-//2. Create a new function called playSound() that takes a single input parameter called name.
-function playSound(name) {
 
-  //3. Take the code we used to play sound in the nextSequence() function and add it to playSound().
-  var audio = new Audio("sounds/" + name + ".mp3");
-  audio.play();
-}
